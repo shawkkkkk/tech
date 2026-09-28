@@ -1,6 +1,6 @@
 /* Kraken wire-withdraw concept — everything here is a front-end facade. No data leaves the browser. */
 (() => {
-  const START_BALANCE = 31423.42;
+  const START_BALANCE = 121219.20;
   const state = {
     balance: START_BALANCE,
     range: '1M',
@@ -15,16 +15,8 @@
   const fmtUSD = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  function addBusinessDays(date, n) {
-    const d = new Date(date);
-    while (n > 0) {
-      d.setDate(d.getDate() + 1);
-      const day = d.getDay();
-      if (day !== 0 && day !== 6) n--;
-    }
-    return d;
-  }
-  const arrivalDate = () => addBusinessDays(new Date(), 3).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  // Fixed for the demo so the arrival always reads as Thursday, October 1.
+  const arrivalDate = () => 'Thursday, October 1';
 
   /* ---------------- Header numbers ---------------- */
   function renderBalance(series) {
@@ -46,12 +38,12 @@
 
   /* ---------------- Chart ---------------- */
   const RANGES = {
-    '1W': { days: 7, pts: 84, start: 30980, vol: 0.004 },
-    '1M': { days: 30, pts: 90, start: 27850, vol: 0.012 },
-    '3M': { days: 90, pts: 90, start: 21300, vol: 0.02 },
-    '6M': { days: 182, pts: 120, start: 14200, vol: 0.025 },
-    '1Y': { days: 365, pts: 150, start: 8900, vol: 0.03 },
-    'ALL': { days: 900, pts: 180, start: 2500, vol: 0.035 },
+    '1W': { days: 7, pts: 84, start: 119500, vol: 0.004 },
+    '1M': { days: 30, pts: 90, start: 107400, vol: 0.012 },
+    '3M': { days: 90, pts: 90, start: 82200, vol: 0.02 },
+    '6M': { days: 182, pts: 120, start: 54800, vol: 0.025 },
+    '1Y': { days: 365, pts: 150, start: 34300, vol: 0.03 },
+    'ALL': { days: 900, pts: 180, start: 9600, vol: 0.035 },
   };
   function rng(seed) {
     return () => {
@@ -284,7 +276,7 @@
           <button class="option-card" id="std">
             <div class="oc-head"><span class="oc-icon">${ICONS.bank}</span>Up to 3 business days</div>
             <div class="oc-desc">Estimated arrival by ${arrivalDate()}.</div>
-            <div class="oc-meta"><span>0-4 USD fee</span><span>Up to 50,000 USD daily</span></div>
+            <div class="oc-meta"><span>0-4 USD fee</span><span>Up to 250,000 USD daily</span></div>
           </button>`;
       },
       mount() { $('#std').onclick = () => go('method'); },
@@ -359,7 +351,7 @@
           <div class="amt-big"><input id="amtInput" inputmode="decimal" autocomplete="off" value="${state.amount ? '$' + esc(state.amount) : '$0'}"/></div>
           <div class="amt-sub" id="amtSub"></div>
           <div class="amt-chips">
-            <button data-v="1000">$1,000</button><button data-v="10000">$10,000</button><button data-v="30000">$30,000</button><button data-v="max">MAX</button>
+            <button data-v="1000">$1,000</button><button data-v="10000">$10,000</button><button data-v="100000">$100,000</button><button data-v="max">MAX</button>
           </div>
           <div class="summary">
             <div class="sr"><span>Available</span><b>${fmtUSD(state.balance)}</b></div>
@@ -449,7 +441,7 @@
           <div class="center">
             <svg class="check-circle" viewBox="0 0 104 104"><circle cx="52" cy="52" r="52"/><path d="M32 53.5 45.5 67 73 39"/></svg>
             <h3 class="success-title">${fmtUSD(r.amount)} is on its way</h3>
-            <p class="success-sub">Your wire to <b style="color:#fff">${esc(r.bank.name)}</b> will be deposited within 3 business days — by ${r.arrival}.</p>
+            <p class="success-sub">Your wire to <b style="color:#fff">${esc(r.bank.name)}</b> will be deposited within 3 business days — on ${r.arrival}.</p>
           </div>
           <div class="receipt">
             <div class="sr"><span>Amount</span><b>${fmtUSD(r.amount)} USD</b></div>
