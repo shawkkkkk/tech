@@ -101,16 +101,16 @@
           <input class="field" id="accountNickname" autocomplete="off" placeholder="Account nickname" value="${esc(r.nickname)}">
         </div>
         <div class="secure"><b>🔒 Demo data stays on this page</b><br><span class="subtle">Nothing is sent, stored, or logged by this prototype.</span></div>
-        <button class="continue" type="button" data-action="save-bank">Continue</button>`;
+        <button class="continue" type="button" data-action="save-bank" onclick="window.KrakenDemo.saveBank();return false;">Continue</button>`;
       return;
     }
     if(state.step==='amount'){
       modal.innerHTML = head('How much do you want to withdraw?','bank') + `
         <div class="label">Available balance</div>
         <div style="font-size:34px;font-weight:850;margin:6px 0 22px">${money(balance)}</div>
-        <div class="row"><input class="field" id="amountInput" inputmode="decimal" placeholder="$0.00" value="${esc(state.amount)}"><button class="btn secondary" type="button" style="white-space:nowrap" data-action="all">Withdraw all</button></div>
+        <div class="row"><input class="field" id="amountInput" inputmode="decimal" placeholder="$0.00" value="${esc(state.amount)}"><button class="btn secondary" type="button" style="white-space:nowrap" data-action="all" onclick="window.KrakenDemo.withdrawAll();return false;">Withdraw all</button></div>
         <div class="summary"><div><span>Recipient</span><b>${esc(r.name)}</b></div><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Method</span><b>Wire</b></div></div>
-        <button class="continue" type="button" data-action="review">Continue</button>`;
+        <button class="continue" type="button" data-action="review" onclick="window.KrakenDemo.saveAmount();return false;">Continue</button>`;
       return;
     }
     if(state.step==='review'){
@@ -126,7 +126,7 @@
           <div><span>Speed</span><b>Up to 3 business days</b></div>
         </div>
         <div class="concept-note">This final button only advances the prototype. It cannot move money.</div>
-        <button class="continue" type="button" data-action="confirm">Confirm withdrawal</button>`;
+        <button class="continue" type="button" data-action="confirm" onclick="window.KrakenDemo.go('success');return false;">Confirm withdrawal</button>`;
       return;
     }
     if(state.step==='success'){
@@ -138,7 +138,7 @@
           <p>Your concept wire withdrawal to <b>${esc(r.name)}</b> is shown as scheduled to be deposited within <b>3 business days</b>.</p>
           <div class="summary"><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Account nickname</span><b>${esc(r.nickname)}</b></div><div><span>Status</span><b class="green">Demo complete</b></div></div>
           <div class="concept-note">CONCEPT DEMO — NO REAL TRANSACTION OCCURRED. This page is for product visualization only.</div>
-          <button class="continue" type="button" data-action="done">Done</button>
+          <button class="continue" type="button" data-action="done" onclick="window.KrakenDemo.reset();return false;">Done</button>
         </div>`;
     }
   }
@@ -184,6 +184,22 @@
       };
     });
   }
+
+  window.KrakenDemo = {
+    saveBank,
+    saveAmount,
+    go,
+    withdrawAll(){
+      const input=document.getElementById('amountInput');
+      if(input){ input.value=balance.toFixed(2); state.amount=balance.toFixed(2); }
+    },
+    reset(){
+      closeFlow();
+      state.step='asset';
+      state.amount='';
+      state.recipient={name:'',bank:'',account:'',routing:'',nickname:''};
+    }
+  };
 
   withdrawBtn.addEventListener('click', openFlow);
   overlay.addEventListener('click', e => { if(e.target===overlay) closeFlow(); });
