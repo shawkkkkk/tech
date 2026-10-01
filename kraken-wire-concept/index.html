@@ -58,9 +58,9 @@
   const money = n => new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'}).format(n);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  function openFlow(){ state.step='asset'; render(); overlay.classList.add('show'); }
+  function openFlow(){ state.step='asset'; render(); bindCurrentActions(); overlay.classList.add('show'); }
   function closeFlow(){ overlay.classList.remove('show'); }
-  function go(step){ state.step=step; render(); }
+  function go(step){ state.step=step; render(); bindCurrentActions(); }
 
   function head(title, backStep=''){
     return `<div class="modal-head"><div class="row">${backStep ? `<button class="back" data-action="back" data-step="${backStep}" aria-label="Back">‹</button>` : ''}<h2>${title}</h2></div><button class="close" data-action="close" aria-label="Close">×</button></div>`;
@@ -101,7 +101,7 @@
           <input class="field" id="accountNickname" autocomplete="off" placeholder="Account nickname" value="${esc(r.nickname)}">
         </div>
         <div class="secure"><b>🔒 Demo data stays on this page</b><br><span class="subtle">Nothing is sent, stored, or logged by this prototype.</span></div>
-        <button class="continue" data-action="save-bank">Continue</button>`;
+        <button class="continue" type="button" data-action="save-bank">Continue</button>`;
       return;
     }
     if(state.step==='amount'){
@@ -110,7 +110,7 @@
         <div style="font-size:34px;font-weight:850;margin:6px 0 22px">${money(balance)}</div>
         <div class="row"><input class="field" id="amountInput" inputmode="decimal" placeholder="$0.00" value="${esc(state.amount)}"><button class="btn secondary" type="button" style="white-space:nowrap" data-action="all">Withdraw all</button></div>
         <div class="summary"><div><span>Recipient</span><b>${esc(r.name)}</b></div><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Method</span><b>Wire</b></div></div>
-        <button class="continue" data-action="review">Continue</button>`;
+        <button class="continue" type="button" data-action="review">Continue</button>`;
       return;
     }
     if(state.step==='review'){
@@ -126,7 +126,7 @@
           <div><span>Speed</span><b>Up to 3 business days</b></div>
         </div>
         <div class="concept-note">This final button only advances the prototype. It cannot move money.</div>
-        <button class="continue" data-action="confirm">Confirm withdrawal</button>`;
+        <button class="continue" type="button" data-action="confirm">Confirm withdrawal</button>`;
       return;
     }
     if(state.step==='success'){
@@ -138,7 +138,7 @@
           <p>Your concept wire withdrawal to <b>${esc(r.name)}</b> is shown as scheduled to be deposited within <b>3 business days</b>.</p>
           <div class="summary"><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Account nickname</span><b>${esc(r.nickname)}</b></div><div><span>Status</span><b class="green">Demo complete</b></div></div>
           <div class="concept-note">CONCEPT DEMO — NO REAL TRANSACTION OCCURRED. This page is for product visualization only.</div>
-          <button class="continue" data-action="done">Done</button>
+          <button class="continue" type="button" data-action="done">Done</button>
         </div>`;
     }
   }
@@ -159,23 +159,34 @@
     go('review');
   }
 
+  function bindCurrentActions(){
+    modal.querySelectorAll('[data-action]').forEach(el => {
+      el.onclick = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const action=el.dataset.action;
+        if(action==='close'){ closeFlow(); return; }
+        if(action==='back'){ go(el.dataset.step); return; }
+        if(action==='next'){ go(el.dataset.step); return; }
+        if(action==='save-bank'){ saveBank(); return; }
+        if(action==='all'){
+          const input=document.getElementById('amountInput');
+          if(input){ input.value=balance.toFixed(2); state.amount=balance.toFixed(2); }
+          return;
+        }
+        if(action==='review'){ saveAmount(); return; }
+        if(action==='confirm'){ go('success'); return; }
+        if(action==='done'){
+          closeFlow();
+          state.step='asset'; state.amount=''; state.recipient={name:'',bank:'',account:'',routing:'',nickname:''};
+          return;
+        }
+      };
+    });
+  }
+
   withdrawBtn.addEventListener('click', openFlow);
   overlay.addEventListener('click', e => { if(e.target===overlay) closeFlow(); });
-  modal.addEventListener('click', e => {
-    const el=e.target.closest('[data-action]'); if(!el) return;
-    const action=el.dataset.action;
-    if(action==='close'){ closeFlow(); return; }
-    if(action==='back'){ go(el.dataset.step); return; }
-    if(action==='next'){ go(el.dataset.step); return; }
-    if(action==='save-bank'){ saveBank(); return; }
-    if(action==='all'){ const input=document.getElementById('amountInput'); if(input){input.value=balance.toFixed(2);state.amount=balance.toFixed(2);} return; }
-    if(action==='review'){ saveAmount(); return; }
-    if(action==='confirm'){ go('success'); return; }
-    if(action==='done'){
-      closeFlow();
-      state.step='asset'; state.amount=''; state.recipient={name:'',bank:'',account:'',routing:'',nickname:''};
-    }
-  });
 
   modal.addEventListener('keydown', e => {
     if(e.key!=='Enter') return;
