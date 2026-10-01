@@ -1,156 +1,64 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>Kraken — Wire Withdraw Concept</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kraken Wire Withdrawal Concept</title>
+  <style>
+    :root{--bg:#050505;--panel:#181818;--panel2:#202020;--panel3:#111;--muted:#8f8f95;--text:#f2f2f2;--line:#2a2a2a;--green:#19c36a;--red:#ff5260;--white:#fff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+    button,input{font:inherit}.app{display:grid;grid-template-columns:190px 1fr;min-height:100vh}.sidebar{position:fixed;left:10px;top:10px;bottom:10px;width:180px;background:#141414;border-radius:14px;padding:18px 14px;display:flex;flex-direction:column;z-index:10}.brand{font-weight:900;font-size:24px;letter-spacing:-1px;margin:2px 6px 20px}.brand small{font-size:10px;font-weight:700;letter-spacing:.08em;color:#aaa;display:block;margin-top:3px}.nav{display:flex;flex-direction:column;gap:5px}.nav a{color:#cfcfcf;text-decoration:none;padding:11px 12px;border-radius:9px;font-weight:600;display:flex;gap:10px;align-items:center}.nav a:hover,.nav a.active{background:#1f1f1f;color:#fff}.nav-bottom{margin-top:auto}.content{grid-column:2;padding:14px 30px 30px 28px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px}.search{margin:auto;max-width:605px;flex:1;background:#1d1d1d;border:1px solid #2a2a2a;height:48px;border-radius:14px;padding:0 18px;color:#aaa;display:flex;align-items:center}.top-actions{display:flex;gap:12px;align-items:center}.pill{background:#1b1b1b;border:1px solid #272727;color:#fff;padding:13px 20px;border-radius:999px;font-weight:700}.avatar{width:38px;height:38px;border-radius:50%;background:#161616;display:grid;place-items:center;color:#777}.demo-badge{position:fixed;right:18px;bottom:18px;z-index:60;background:#fff;color:#050505;border-radius:999px;padding:10px 14px;font-size:12px;font-weight:900;letter-spacing:.05em;box-shadow:0 8px 40px rgba(255,255,255,.12)}
+    .main{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:36px;margin-top:30px}.portfolio{padding:18px 20px 0}.label{color:#7f7f85;font-size:17px}.value{font-size:54px;letter-spacing:-.04em;margin:4px 0 4px}.stats{display:flex;gap:48px;color:#ddd}.stats b{display:block;margin-top:4px}.green{color:var(--green)}.red{color:var(--red)}.actions{display:flex;gap:12px;margin-top:18px}.btn{border:none;border-radius:999px;padding:14px 22px;font-weight:800;cursor:pointer}.btn.primary{background:#fff;color:#111}.btn.secondary{background:#1a1a1a;color:#eee}.chart{height:480px;margin-top:40px;position:relative;border-top:1px solid #111;border-bottom:1px solid #111;background-image:linear-gradient(#111 1px,transparent 1px),linear-gradient(90deg,#111 1px,transparent 1px);background-size:100% 120px,160px 100%}.chart svg{position:absolute;inset:0;width:100%;height:100%}.axis{position:absolute;right:0;color:#56565d;font-size:12px}.axis.a1{top:10px}.axis.a2{top:130px}.axis.a3{top:250px}.axis.a4{bottom:12px}.trade-card{background:#161616;border-radius:20px;padding:20px;height:620px}.tabs{display:flex;gap:30px;font-weight:700;margin-bottom:20px}.tabs .active{background:#fff;color:#111;border-radius:9px;padding:9px 16px}.asset-box,.repeat-box{background:#202020;border-radius:18px;padding:20px;margin-top:14px}.asset-row{display:flex;justify-content:space-between;align-items:center}.big-amount{font-size:52px;color:#868686;margin:32px 0}.chips{display:flex;gap:10px}.chip{background:#292929;color:#777;padding:8px 12px;border-radius:999px;font-weight:700}.review{width:100%;padding:16px;border:0;border-radius:999px;margin-top:28px;background:#818181;color:#111;font-weight:800}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.66);backdrop-filter:blur(1px);display:none;align-items:center;justify-content:center;z-index:50}.overlay.show{display:flex}.modal{width:min(590px,92vw);max-height:82vh;overflow:auto;background:#202020;border:1px solid #2f2f2f;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.5);padding:22px}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.modal-head h2{margin:0;font-size:24px;letter-spacing:-.03em}.close,.back{background:none;border:0;color:#fff;font-size:24px;cursor:pointer}.searchbox{background:#151515;border:1px solid #252525;border-radius:12px;padding:16px;color:#8b8b8b;margin-bottom:20px}.section-title{display:flex;justify-content:space-between;color:#a9a9ae;margin:18px 0 8px}.choice{display:flex;justify-content:space-between;align-items:center;padding:18px;border-radius:14px;background:#252525;border:1px solid #353535;margin:8px 0;cursor:pointer}.choice:hover{background:#2a2a2a}.choice strong{font-size:18px}.choice small{display:block;color:#9b9ba1;margin-top:4px}.coin{width:42px;height:42px;border-radius:50%;background:#ededed;color:#111;display:grid;place-items:center;font-weight:900}.row{display:flex;gap:14px;align-items:center}.fields{display:flex;flex-direction:column;gap:13px}.field{background:#151515;border:1px solid #252525;border-radius:12px;padding:14px 14px;color:#fff;width:100%;outline:none}.field:focus{border-color:#555}.secure{background:#fff;color:#111;border-radius:12px;padding:14px;margin-top:12px;font-size:14px}.continue{width:100%;border:0;border-radius:999px;padding:15px;margin-top:18px;font-weight:900;background:#fff;color:#111;cursor:pointer}.continue:disabled{background:#858585;color:#222;cursor:not-allowed}.subtle{color:#999;font-size:13px}.success{text-align:center;padding:26px 12px 18px}.check{width:96px;height:96px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:12px auto 22px;font-size:54px;color:white;font-weight:900}.success h2{font-size:28px;margin:8px 0}.success p{color:#b2b2b8;font-size:16px;line-height:1.5}.summary{background:#171717;border:1px solid #2b2b2b;border-radius:14px;padding:16px;margin-top:18px;text-align:left}.summary div{display:flex;justify-content:space-between;padding:7px 0}.concept-note{margin-top:20px;padding:12px 14px;border:1px solid #3a3a3a;border-radius:12px;color:#a6a6ad;font-size:12px;line-height:1.45}
+    @media(max-width:1000px){.main{grid-template-columns:1fr}.trade-card{display:none}}@media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{display:none}.content{grid-column:1;padding:12px}.value{font-size:42px}.main{margin-top:15px}.chart{height:360px}.top-actions{display:none}}
+  </style>
 </head>
 <body>
-  <div class="app">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="logo" aria-label="Kraken">
-        <svg viewBox="0 0 24 24" width="30" height="30"><path fill="currentColor" d="M2 12A10 10 0 0 1 22 12V19.4a1.6 1.6 0 0 1-3.2 0V13.5a1.2 1.2 0 0 0-2.4 0V17.4a1.6 1.6 0 0 1-3.2 0V13.5a1.2 1.2 0 0 0-2.4 0V17.4a1.6 1.6 0 0 1-3.2 0V13.5a1.2 1.2 0 0 0-2.4 0V19.4a1.6 1.6 0 0 1-3.2 0Z"/></svg>
-      </div>
-      <nav class="nav">
-        <a class="nav-item active" href="#"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
-        <a class="nav-item" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18M8 5V3h8v2"/></svg><span>Portfolio</span></a>
-        <a class="nav-item" href="#"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>Explore</span></a>
-        <a class="nav-item" href="#"><svg viewBox="0 0 24 24" class="filled"><rect x="4" y="13" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="16" y="3" width="4" height="18" rx="1"/></svg><span>Earn</span></a>
-        <a class="nav-item" href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" class="fill-soft"/><path d="M12 7v9m-4-4 4 4 4-4"/></svg><span>Borrow</span></a>
-        <a class="nav-item" href="#"><svg viewBox="0 0 24 24"><path d="M2 12h4l3-8 6 16 3-8h4"/></svg><span>Activity</span></a>
-        <div class="nav-divider"></div>
-        <a class="nav-item small" href="#"><span class="coin btc sm">₿<i class="down"></i></span><span>Bitcoin</span></a>
-        <a class="nav-item small" href="#"><span class="coin eth sm"><svg viewBox="0 0 24 24"><path d="M12 3 6.5 12 12 15l5.5-3zM6.5 13 12 21l5.5-8L12 16z" fill="#fff" stroke="none"/></svg><i class="down"></i></span><span>Ethereum</span></a>
-      </nav>
-      <div class="nav bottom">
-        <a class="nav-item" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 9l-3 3 3 3"/></svg><span>Collapse</span></a>
-        <a class="nav-item" href="#"><span class="icon-dot"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8S10 3 7.5 4 9 8 12 8Zm0 0s2-5 4.5-4S15 8 12 8Z"/></svg><i></i></span><span>Offers</span></a>
-        <a class="nav-item" href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg><span>Priority Support</span></a>
-      </div>
-    </aside>
-
-    <!-- Main -->
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">◖◗<small>KRAKEN CONCEPT</small></div>
+    <div class="nav">
+      <a class="active">⌂ <span>Home</span></a><a>▣ <span>Portfolio</span></a><a>⌕ <span>Explore</span></a><a>▥ <span>Earn</span></a><a>↓ <span>Borrow</span></a><a>⌁ <span>Activity</span></a>
+      <a style="margin-top:12px">₿ <span>Bitcoin</span></a><a>◆ <span>Ethereum</span></a>
+    </div>
+    <div class="nav nav-bottom"><a>⇲ <span>Collapse</span></a><a>🎁 <span>Offers</span></a><a>ⓘ <span>Priority Support</span></a></div>
+  </aside>
+  <main class="content">
+    <div class="topbar">
+      <div></div><div class="search">⌕ &nbsp; Search assets, markets...</div><div class="top-actions"><button class="pill">⇅ &nbsp; Transfer</button><div>⠿</div><div>♢</div><div class="avatar">MH</div></div>
+    </div>
     <div class="main">
-      <header class="topbar">
-        <div class="search">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input type="text" placeholder="Search assets, markets..." />
-          <kbd>⌘ + K</kbd>
+      <section class="portfolio">
+        <div class="label">Portfolio value</div><div class="value">$172,328.42</div>
+        <div class="stats"><div><span class="label">Balance Change 1M</span><b class="green">+$4,218.37 (↗2.51%)</b></div><div><span class="label">Unrealized return</span><b class="green">+$1,942.18</b></div></div>
+        <div class="actions"><button class="btn primary">▣ &nbsp; Deposit</button><button class="btn secondary" id="withdrawBtn">↥ &nbsp; Withdraw</button></div>
+        <div class="chart">
+          <svg viewBox="0 0 1000 480" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,420 80,420 120,160 380,160 420,420 580,420 610,130 650,420 1000,420" fill="none" stroke="#eee" stroke-width="3"/></svg>
+          <span class="axis a1">172k</span><span class="axis a2">129k</span><span class="axis a3">86k</span><span class="axis a4">0</span>
         </div>
-        <div class="top-actions">
-          <button class="pill-btn"><svg viewBox="0 0 24 24"><path d="M8 20V5m0 0L4.5 8.5M8 5l3.5 3.5M16 4v15m0 0-3.5-3.5M16 19l3.5-3.5"/></svg>Transfer</button>
-          <button class="icon-btn" aria-label="Apps"><svg viewBox="0 0 24 24" class="filled"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg></button>
-          <button class="icon-btn notif" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg><i></i></button>
-          <button class="avatar">MH <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
-        </div>
-      </header>
-
-      <div class="content">
-        <section class="left">
-          <div class="pv-label">Portfolio value</div>
-          <div class="pv-value" id="pvValue"></div>
-          <div class="pv-stats">
-            <div>
-              <div class="stat-label" id="changeLabel">Balance Change 1M</div>
-              <div class="stat-value up" id="changeValue"></div>
-            </div>
-            <div>
-              <div class="stat-label">Unrealized return</div>
-              <div class="stat-value up">+$5,647.21</div>
-            </div>
-          </div>
-
-          <div class="actions-row">
-            <div class="btn-group">
-              <button class="btn btn-light"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="3" fill="#fff" stroke="none"/></svg>Deposit</button>
-              <button class="btn btn-dark" id="withdrawBtn"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 20h14"/></svg>Withdraw</button>
-            </div>
-            <div class="ranges" id="ranges">
-              <button data-r="1W">1W</button>
-              <button data-r="1M" class="active">1M</button>
-              <button data-r="3M">3M</button>
-              <button data-r="6M">6M</button>
-              <button data-r="1Y">1Y</button>
-              <button data-r="ALL">ALL</button>
-            </div>
-          </div>
-
-          <div class="chart-wrap" id="chartWrap">
-            <svg id="chart" preserveAspectRatio="none"></svg>
-            <div class="chart-tip" id="chartTip"></div>
-          </div>
-
-          <div class="for-you">
-            <div class="for-you-head">
-              <span>FOR YOU</span>
-              <div class="arrows">
-                <button aria-label="Previous" id="fyPrev"><svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
-                <button aria-label="Next" id="fyNext"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
-              </div>
-            </div>
-            <div class="cards" id="fyCards">
-              <div class="fy-card"><div class="fy-tag">Earn</div><div class="fy-title">Earn up to 4.1% on USD</div><div class="fy-sub">Put idle cash to work with opt-in rewards.</div></div>
-              <div class="fy-card"><div class="fy-tag">Security</div><div class="fy-title">Add a passkey</div><div class="fy-sub">Faster, phishing-resistant sign-in.</div></div>
-              <div class="fy-card"><div class="fy-tag">New</div><div class="fy-title">Wire to anyone</div><div class="fy-sub">Send USD to any bank account in up to 3 business days.</div></div>
-              <div class="fy-card"><div class="fy-tag">Recurring</div><div class="fy-title">Set up recurring buys</div><div class="fy-sub">Dollar-cost average into BTC automatically.</div></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Trade panel -->
-        <aside class="trade">
-          <div class="trade-tabs" id="tradeTabs">
-            <button class="active">Buy</button><button>Sell</button><button>Convert</button>
-          </div>
-          <div class="trade-box">
-            <div class="trade-row">
-              <button class="asset-select"><span class="coin btc xs">₿</span>Bitcoin<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
-              <button class="ghost-select" id="orderType">Buy now<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
-            </div>
-            <div class="trade-amount">
-              <input id="tradeAmt" inputmode="decimal" value="$0" />
-              <span class="unit">BTC <svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></span>
-            </div>
-            <div class="presets" id="presets">
-              <button data-v="20">$20</button><button data-v="50">$50</button><button data-v="100">$100</button><button data-v="max">MAX</button>
-            </div>
-          </div>
-          <div class="trade-box repeat">
-            <span>Repeat</span>
-            <button class="toggle" id="repeatToggle" aria-pressed="false"><i></i></button>
-          </div>
-          <div class="pay-label">Pay with</div>
-          <div class="pay-row">
-            <button class="currency"><span class="flag"></span>USD<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
-            <span class="avail" id="payAvail"></span>
-          </div>
-          <button class="review-btn" id="reviewBtn" disabled>Review</button>
-        </aside>
-      </div>
+      </section>
+      <aside class="trade-card"><div class="tabs"><span class="active">Buy</span><span>Sell</span><span>Convert</span></div><div class="asset-box"><div class="asset-row"><b>◈ &nbsp; Babylon⌄</b><span>Buy now⌄</span></div><div class="big-amount">$0</div><div class="chips"><span class="chip">$20</span><span class="chip">$50</span><span class="chip">$100</span><span class="chip">MAX</span></div></div><div class="repeat-box">Repeat &nbsp; ◉</div><div class="asset-box"><div class="asset-row"><span>Pay with</span><span>$0.50 available</span></div><div style="margin-top:25px;font-weight:800">🇺🇸 &nbsp; USD⌄</div></div><button class="review">Review</button></aside>
     </div>
-  </div>
-
-  <!-- Withdraw modal -->
-  <div class="overlay" id="overlay" hidden>
-    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-head">
-        <button class="back" id="modalBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
-        <h2 id="modalTitle">Withdraw</h2>
-        <button class="close" id="modalClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
-  <div class="concept-badge">Concept prototype · not a real Kraken product</div>
-
-  <script src="app.js"></script>
+  </main>
+</div>
+<div class="demo-badge">CONCEPT DEMO — NO REAL TRANSACTIONS</div>
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+<script>
+  const overlay=document.getElementById('overlay'),modal=document.getElementById('modal');
+  const balance=172328.42; let formData={name:'',bank:'',account:'',routing:'',nickname:''};
+  const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
+  function show(html){modal.innerHTML=html;overlay.classList.add('show');}
+  function hide(){overlay.classList.remove('show')}
+  function head(title,back=''){return `<div class="modal-head"><div class="row">${back?`<button class="back" onclick="${back}">‹</button>`:''}<h2>${title}</h2></div><button class="close" onclick="hide()">×</button></div>`}
+  function stepAsset(){show(head('Withdraw')+`<div class="searchbox">⌕ &nbsp; Search</div><div class="section-title"><b>Cash</b><b>Available Balance</b></div><div class="choice" onclick="stepSpeed()"><div class="row"><div class="coin">$</div><div><strong>US Dollar</strong><small>USD</small></div></div><strong>${money(balance)}</strong></div><div class="concept-note">Interactive prototype only. This demo does not connect to Kraken, a bank, or any payment network.</div>`)}
+  function stepSpeed(){show(head('Select withdrawal speed','stepAsset()')+`<div class="choice" onclick="stepMethod()"><div><strong>▣ &nbsp; Up to 3 business days</strong><small>Estimated arrival within 3 business days</small></div><div>›</div></div><div class="concept-note">Instant withdrawal is intentionally omitted in this product concept.</div>`)}
+  function stepMethod(){show(head('Select a withdrawal method','stepSpeed()')+`<div class="choice" onclick="stepBank()"><div><strong>▣ &nbsp; Wire</strong><small>Bank wire • prototype route</small></div><div>›</div></div><div class="concept-note">Only Wire is shown in this concept. No real transfer can be initiated.</div>`)}
+  function stepBank(){show(head('Enter recipient bank details','stepMethod()')+`<div class="fields"><input class="field" id="name" placeholder="Recipient name"><input class="field" id="bank" placeholder="Bank name"><input class="field" id="account" placeholder="Account number"><input class="field" id="routing" placeholder="Routing number"><input class="field" id="nickname" placeholder="Account nickname"></div><div class="secure"><b>🔒 Demo data stays on this page</b><br><span class="subtle">Nothing is sent, stored, or logged by this prototype.</span></div><button class="continue" onclick="saveBank()">Continue</button>`)}
+  function saveBank(){formData={name:name.value.trim(),bank:bank.value.trim(),account:account.value.trim(),routing:routing.value.trim(),nickname:nickname.value.trim()};if(!Object.values(formData).every(Boolean)){alert('Fill in each demo field to continue.');return}stepAmount()}
+  function stepAmount(){show(head('How much do you want to withdraw?','stepBank()')+`<div class="label">Available balance</div><div style="font-size:34px;font-weight:850;margin:6px 0 22px">${money(balance)}</div><div class="row"><input class="field" id="amount" type="number" min="0" max="${balance}" step="0.01" placeholder="$0.00"><button class="btn secondary" style="white-space:nowrap" onclick="document.getElementById('amount').value='${balance.toFixed(2)}'">Withdraw all</button></div><div class="summary"><div><span>Recipient</span><b>${escapeHtml(formData.name)}</b></div><div><span>Bank</span><b>${escapeHtml(formData.bank)}</b></div><div><span>Method</span><b>Wire</b></div></div><button class="continue" onclick="stepSuccess()">Continue</button>`)}
+  function stepSuccess(){const a=parseFloat(document.getElementById('amount').value);if(!Number.isFinite(a)||a<=0||a>balance){alert('Enter an amount between $0.01 and '+money(balance)+'.');return}show(head('Withdrawal scheduled')+`<div class="success"><div class="check">✓</div><h2>${money(a)} scheduled</h2><p>Your concept wire withdrawal to <b>${escapeHtml(formData.name)}</b> is shown as scheduled to be deposited within <b>3 business days</b>.</p><div class="summary"><div><span>Bank</span><b>${escapeHtml(formData.bank)}</b></div><div><span>Account nickname</span><b>${escapeHtml(formData.nickname)}</b></div><div><span>Status</span><b class="green">Demo complete</b></div></div><div class="concept-note">CONCEPT DEMO — NO REAL TRANSACTION OCCURRED. This page is for product visualization only.</div><button class="continue" onclick="hide()">Done</button></div>`)}
+  function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  document.getElementById('withdrawBtn').addEventListener('click',stepAsset); overlay.addEventListener('click',e=>{if(e.target===overlay)hide()});
+</script>
 </body>
 </html>
