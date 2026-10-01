@@ -1,6 +1,6 @@
 /* Kraken wire-withdraw concept — everything here is a front-end facade. No data leaves the browser. */
 (() => {
-  const START_BALANCE = 147328.33;
+  const START_BALANCE = 172328.32;
   const state = {
     balance: START_BALANCE,
     range: '1M',
@@ -38,12 +38,12 @@
 
   /* ---------------- Chart ---------------- */
   const RANGES = {
-    '1W': { days: 7, pts: 84, start: 145250, vol: 0.004 },
-    '1M': { days: 30, pts: 90, start: 130540, vol: 0.012 },
-    '3M': { days: 90, pts: 90, start: 99910, vol: 0.02 },
-    '6M': { days: 182, pts: 120, start: 66610, vol: 0.025 },
-    '1Y': { days: 365, pts: 150, start: 41690, vol: 0.03 },
-    'ALL': { days: 900, pts: 180, start: 11670, vol: 0.035 },
+    '1W': { days: 7, pts: 84, start: 119500, vol: 0.004 },
+    '1M': { days: 30, pts: 90, start: 107400, vol: 0.012 },
+    '3M': { days: 90, pts: 90, start: 82200, vol: 0.02 },
+    '6M': { days: 182, pts: 120, start: 54800, vol: 0.025 },
+    '1Y': { days: 365, pts: 150, start: 34300, vol: 0.03 },
+    'ALL': { days: 900, pts: 180, start: 9600, vol: 0.035 },
   };
   function rng(seed) {
     return () => {
