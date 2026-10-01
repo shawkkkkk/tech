@@ -1,42 +1,188 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kraken Wire Withdrawal Concept</title>
-<style>
-:root{--bg:#050505;--panel:#181818;--panel2:#222;--muted:#929298;--text:#f4f4f4;--green:#19c36a}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}
-.app{display:grid;grid-template-columns:190px 1fr;min-height:100vh}.side{position:fixed;inset:10px auto 10px 10px;width:180px;background:#141414;border-radius:14px;padding:18px 14px;display:flex;flex-direction:column}.brand{font-weight:900;font-size:23px;margin:2px 6px 20px}.brand small{font-size:10px;display:block;color:#aaa;letter-spacing:.08em;margin-top:3px}.nav{display:flex;flex-direction:column;gap:4px}.nav div{padding:11px 12px;border-radius:9px;color:#d0d0d0;font-weight:650}.nav div:first-child{background:#1f1f1f;color:white}.bottom{margin-top:auto}
-.content{grid-column:2;padding:14px 30px 30px 28px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px}.search{max-width:605px;flex:1;margin:auto;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:14px;height:48px;display:flex;align-items:center;padding:0 18px;color:#888}.right{display:flex;align-items:center;gap:12px}.pill{background:#1b1b1b;border:1px solid #282828;color:#fff;padding:12px 18px;border-radius:999px;font-weight:750}.avatar{width:38px;height:38px;border-radius:50%;background:#171717;display:grid;place-items:center;color:#777}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:36px;margin-top:28px}.port{padding:18px 20px 0}.muted{color:#7f7f85}.value{font-size:54px;letter-spacing:-.04em;margin:4px 0}.stats{display:flex;gap:44px}.stats b{display:block;margin-top:5px}.green{color:#19c36a}.actions{display:flex;gap:12px;margin-top:18px}.btn{border:0;border-radius:999px;padding:14px 22px;font-weight:850;cursor:pointer}.white{background:white;color:#111}.dark{background:#1a1a1a;color:white}
-.chart{height:480px;margin-top:40px;position:relative;border-top:1px solid #111;border-bottom:1px solid #111;background-image:linear-gradient(#111 1px,transparent 1px),linear-gradient(90deg,#111 1px,transparent 1px);background-size:100% 120px,160px 100%}.chart svg{position:absolute;inset:0;width:100%;height:100%}
-.trade{background:#171717;border-radius:20px;padding:20px;height:620px}.tabs{display:flex;gap:30px;font-weight:800}.tabs b{background:white;color:#111;border-radius:9px;padding:9px 16px}.box{background:#202020;border-radius:18px;padding:20px;margin-top:14px}.row{display:flex;justify-content:space-between;align-items:center;gap:14px}.big{font-size:52px;color:#828282;margin:34px 0}.chips{display:flex;gap:9px}.chip{background:#2b2b2b;color:#777;padding:8px 12px;border-radius:999px}.review{width:100%;border:0;border-radius:999px;padding:16px;margin-top:28px;background:#808080;font-weight:850}
-.badge{position:fixed;right:18px;bottom:18px;z-index:70;background:#fff;color:#050505;border-radius:999px;padding:10px 14px;font-size:12px;font-weight:950;letter-spacing:.05em;box-shadow:0 8px 40px #000}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;z-index:50}.overlay.show{display:flex}.modal{width:min(590px,92vw);max-height:84vh;overflow:auto;background:#202020;border:1px solid #313131;border-radius:20px;padding:22px;box-shadow:0 24px 90px #000}.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.head h2{margin:0;font-size:24px}.close,.back{border:0;background:none;color:white;font-size:24px;cursor:pointer}.choice{display:flex;justify-content:space-between;align-items:center;padding:18px;border-radius:14px;background:#272727;border:1px solid #373737;margin:8px 0;cursor:pointer}.choice strong{font-size:18px}.choice small{display:block;color:#9b9ba1;margin-top:4px}.coin{width:42px;height:42px;border-radius:50%;background:#eee;color:#111;display:grid;place-items:center;font-weight:900}.field{background:#151515;border:1px solid #292929;border-radius:12px;padding:14px;color:#fff;width:100%;outline:none}.fields{display:flex;flex-direction:column;gap:13px}.secure{background:#fff;color:#111;border-radius:12px;padding:14px;margin-top:12px;font-size:14px}.continue{width:100%;border:0;border-radius:999px;padding:15px;margin-top:18px;font-weight:900;background:#fff;color:#111;cursor:pointer}.note{margin-top:18px;padding:12px 14px;border:1px solid #3a3a3a;border-radius:12px;color:#a6a6ad;font-size:12px;line-height:1.45}.summary{background:#171717;border:1px solid #2b2b2b;border-radius:14px;padding:16px;margin-top:18px}.summary div{display:flex;justify-content:space-between;padding:7px 0}.success{text-align:center;padding:24px 10px 16px}.check{width:96px;height:96px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:12px auto 22px;font-size:54px;font-weight:900}.success p{color:#b2b2b8;line-height:1.5}
-@media(max-width:1000px){.layout{grid-template-columns:1fr}.trade{display:none}}@media(max-width:760px){.app{grid-template-columns:1fr}.side{display:none}.content{grid-column:1;padding:12px}.value{font-size:42px}.right{display:none}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kraken Wire Withdrawal Concept</title>
+  <style>
+    :root{--bg:#050505;--panel:#181818;--panel2:#202020;--panel3:#111;--muted:#8f8f95;--text:#f2f2f2;--line:#2a2a2a;--green:#19c36a;--red:#ff5260;--white:#fff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+    button,input{font:inherit}.app{display:grid;grid-template-columns:190px 1fr;min-height:100vh}.sidebar{position:fixed;left:10px;top:10px;bottom:10px;width:180px;background:#141414;border-radius:14px;padding:18px 14px;display:flex;flex-direction:column;z-index:10}.brand{font-weight:900;font-size:24px;letter-spacing:-1px;margin:2px 6px 20px}.brand small{font-size:10px;font-weight:700;letter-spacing:.08em;color:#aaa;display:block;margin-top:3px}.nav{display:flex;flex-direction:column;gap:5px}.nav a{color:#cfcfcf;text-decoration:none;padding:11px 12px;border-radius:9px;font-weight:600;display:flex;gap:10px;align-items:center}.nav a:hover,.nav a.active{background:#1f1f1f;color:#fff}.nav-bottom{margin-top:auto}.content{grid-column:2;padding:14px 30px 30px 28px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px}.search{margin:auto;max-width:605px;flex:1;background:#1d1d1d;border:1px solid #2a2a2a;height:48px;border-radius:14px;padding:0 18px;color:#aaa;display:flex;align-items:center}.top-actions{display:flex;gap:12px;align-items:center}.pill{background:#1b1b1b;border:1px solid #272727;color:#fff;padding:13px 20px;border-radius:999px;font-weight:700}.avatar{width:38px;height:38px;border-radius:50%;background:#161616;display:grid;place-items:center;color:#777}.demo-badge{position:fixed;right:18px;bottom:18px;z-index:60;background:#fff;color:#050505;border-radius:999px;padding:10px 14px;font-size:12px;font-weight:900;letter-spacing:.05em;box-shadow:0 8px 40px rgba(255,255,255,.12)}
+    .main{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:36px;margin-top:30px}.portfolio{padding:18px 20px 0}.label{color:#7f7f85;font-size:17px}.value{font-size:54px;letter-spacing:-.04em;margin:4px 0 4px}.stats{display:flex;gap:48px;color:#ddd}.stats b{display:block;margin-top:4px}.green{color:var(--green)}.red{color:var(--red)}.actions{display:flex;gap:12px;margin-top:18px}.btn{border:none;border-radius:999px;padding:14px 22px;font-weight:800;cursor:pointer}.btn.primary{background:#fff;color:#111}.btn.secondary{background:#1a1a1a;color:#eee}.chart{height:480px;margin-top:40px;position:relative;border-top:1px solid #111;border-bottom:1px solid #111;background-image:linear-gradient(#111 1px,transparent 1px),linear-gradient(90deg,#111 1px,transparent 1px);background-size:100% 120px,160px 100%}.chart svg{position:absolute;inset:0;width:100%;height:100%}.axis{position:absolute;right:0;color:#56565d;font-size:12px}.axis.a1{top:10px}.axis.a2{top:130px}.axis.a3{top:250px}.axis.a4{bottom:12px}.trade-card{background:#161616;border-radius:20px;padding:20px;height:620px}.tabs{display:flex;gap:30px;font-weight:700;margin-bottom:20px}.tabs .active{background:#fff;color:#111;border-radius:9px;padding:9px 16px}.asset-box,.repeat-box{background:#202020;border-radius:18px;padding:20px;margin-top:14px}.asset-row{display:flex;justify-content:space-between;align-items:center}.big-amount{font-size:52px;color:#868686;margin:32px 0}.chips{display:flex;gap:10px}.chip{background:#292929;color:#777;padding:8px 12px;border-radius:999px;font-weight:700}.review{width:100%;padding:16px;border:0;border-radius:999px;margin-top:28px;background:#818181;color:#111;font-weight:800}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.66);backdrop-filter:blur(1px);display:none;align-items:center;justify-content:center;z-index:50}.overlay.show{display:flex}.modal{width:min(590px,92vw);max-height:82vh;overflow:auto;background:#202020;border:1px solid #2f2f2f;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.5);padding:22px}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.modal-head h2{margin:0;font-size:24px;letter-spacing:-.03em}.close,.back{background:none;border:0;color:#fff;font-size:24px;cursor:pointer}.searchbox{background:#151515;border:1px solid #252525;border-radius:12px;padding:16px;color:#8b8b8b;margin-bottom:20px}.section-title{display:flex;justify-content:space-between;color:#a9a9ae;margin:18px 0 8px}.choice{display:flex;justify-content:space-between;align-items:center;padding:18px;border-radius:14px;background:#252525;border:1px solid #353535;margin:8px 0;cursor:pointer}.choice:hover{background:#2a2a2a}.choice strong{font-size:18px}.choice small{display:block;color:#9b9ba1;margin-top:4px}.coin{width:42px;height:42px;border-radius:50%;background:#ededed;color:#111;display:grid;place-items:center;font-weight:900}.row{display:flex;gap:14px;align-items:center}.fields{display:flex;flex-direction:column;gap:13px}.field{background:#151515;border:1px solid #252525;border-radius:12px;padding:14px 14px;color:#fff;width:100%;outline:none}.field:focus{border-color:#555}.secure{background:#fff;color:#111;border-radius:12px;padding:14px;margin-top:12px;font-size:14px}.continue{width:100%;border:0;border-radius:999px;padding:15px;margin-top:18px;font-weight:900;background:#fff;color:#111;cursor:pointer}.continue:disabled{background:#858585;color:#222;cursor:not-allowed}.subtle{color:#999;font-size:13px}.success{text-align:center;padding:26px 12px 18px}.check{width:96px;height:96px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:12px auto 22px;font-size:54px;color:white;font-weight:900}.success h2{font-size:28px;margin:8px 0}.success p{color:#b2b2b8;font-size:16px;line-height:1.5}.summary{background:#171717;border:1px solid #2b2b2b;border-radius:14px;padding:16px;margin-top:18px;text-align:left}.summary div{display:flex;justify-content:space-between;padding:7px 0}.concept-note{margin-top:20px;padding:12px 14px;border:1px solid #3a3a3a;border-radius:12px;color:#a6a6ad;font-size:12px;line-height:1.45}
+    @media(max-width:1000px){.main{grid-template-columns:1fr}.trade-card{display:none}}@media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{display:none}.content{grid-column:1;padding:12px}.value{font-size:42px}.main{margin-top:15px}.chart{height:360px}.top-actions{display:none}}
+  </style>
 </head>
 <body>
 <div class="app">
-<aside class="side"><div class="brand">◖◗<small>KRAKEN CONCEPT</small></div><div class="nav"><div>⌂ &nbsp; Home</div><div>▣ &nbsp; Portfolio</div><div>⌕ &nbsp; Explore</div><div>▥ &nbsp; Earn</div><div>↓ &nbsp; Borrow</div><div>⌁ &nbsp; Activity</div><div style="margin-top:12px">₿ &nbsp; Bitcoin</div><div>◆ &nbsp; Ethereum</div></div><div class="nav bottom"><div>⇲ &nbsp; Collapse</div><div>🎁 &nbsp; Offers</div><div>ⓘ &nbsp; Priority Support</div></div></aside>
-<main class="content"><div class="top"><div></div><div class="search">⌕ &nbsp; Search assets, markets...</div><div class="right"><button class="pill">⇅ &nbsp; Transfer</button><span>⠿</span><span>♢</span><div class="avatar">MH</div></div></div>
-<div class="layout"><section class="port"><div class="muted">Portfolio value</div><div class="value">$172,328.42</div><div class="stats"><div><span class="muted">Balance Change 1M</span><b class="green">+$4,218.37 (↗2.51%)</b></div><div><span class="muted">Unrealized return</span><b class="green">+$1,942.18</b></div></div><div class="actions"><button class="btn white">▣ &nbsp; Deposit</button><button class="btn dark" id="withdraw">↥ &nbsp; Withdraw</button></div><div class="chart"><svg viewBox="0 0 1000 480" preserveAspectRatio="none"><polyline points="0,420 80,420 120,160 380,160 420,420 580,420 610,130 650,420 1000,420" fill="none" stroke="#eee" stroke-width="3"/></svg></div></section>
-<aside class="trade"><div class="tabs"><b>Buy</b><span>Sell</span><span>Convert</span></div><div class="box"><div class="row"><strong>◈ &nbsp; Babylon⌄</strong><span>Buy now⌄</span></div><div class="big">$0</div><div class="chips"><span class="chip">$20</span><span class="chip">$50</span><span class="chip">$100</span><span class="chip">MAX</span></div></div><div class="box">Repeat &nbsp; ◉</div><div class="box"><div class="row"><span>Pay with</span><span>$0.50 available</span></div><div style="margin-top:24px;font-weight:800">🇺🇸 &nbsp; USD⌄</div></div><button class="review">Review</button></aside></div></main>
+  <aside class="sidebar">
+    <div class="brand">◖◗<small>KRAKEN CONCEPT</small></div>
+    <div class="nav">
+      <a class="active">⌂ <span>Home</span></a><a>▣ <span>Portfolio</span></a><a>⌕ <span>Explore</span></a><a>▥ <span>Earn</span></a><a>↓ <span>Borrow</span></a><a>⌁ <span>Activity</span></a>
+      <a style="margin-top:12px">₿ <span>Bitcoin</span></a><a>◆ <span>Ethereum</span></a>
+    </div>
+    <div class="nav nav-bottom"><a>⇲ <span>Collapse</span></a><a>🎁 <span>Offers</span></a><a>ⓘ <span>Priority Support</span></a></div>
+  </aside>
+  <main class="content">
+    <div class="topbar">
+      <div></div><div class="search">⌕ &nbsp; Search assets, markets...</div><div class="top-actions"><button class="pill">⇅ &nbsp; Transfer</button><div>⠿</div><div>♢</div><div class="avatar">MH</div></div>
+    </div>
+    <div class="main">
+      <section class="portfolio">
+        <div class="label">Portfolio value</div><div class="value">$172,328.42</div>
+        <div class="stats"><div><span class="label">Balance Change 1M</span><b class="green">+$4,218.37 (↗2.51%)</b></div><div><span class="label">Unrealized return</span><b class="green">+$1,942.18</b></div></div>
+        <div class="actions"><button class="btn primary">▣ &nbsp; Deposit</button><button class="btn secondary" id="withdrawBtn">↥ &nbsp; Withdraw</button></div>
+        <div class="chart">
+          <svg viewBox="0 0 1000 480" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,420 80,420 120,160 380,160 420,420 580,420 610,130 650,420 1000,420" fill="none" stroke="#eee" stroke-width="3"/></svg>
+          <span class="axis a1">172k</span><span class="axis a2">129k</span><span class="axis a3">86k</span><span class="axis a4">0</span>
+        </div>
+      </section>
+      <aside class="trade-card"><div class="tabs"><span class="active">Buy</span><span>Sell</span><span>Convert</span></div><div class="asset-box"><div class="asset-row"><b>◈ &nbsp; Babylon⌄</b><span>Buy now⌄</span></div><div class="big-amount">$0</div><div class="chips"><span class="chip">$20</span><span class="chip">$50</span><span class="chip">$100</span><span class="chip">MAX</span></div></div><div class="repeat-box">Repeat &nbsp; ◉</div><div class="asset-box"><div class="asset-row"><span>Pay with</span><span>$0.50 available</span></div><div style="margin-top:25px;font-weight:800">🇺🇸 &nbsp; USD⌄</div></div><button class="review">Review</button></aside>
+    </div>
+  </main>
 </div>
-<div class="badge">CONCEPT DEMO — NO REAL TRANSACTIONS</div>
+<div class="demo-badge">CONCEPT DEMO — NO REAL TRANSACTIONS</div>
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 <script>
-const overlay=document.getElementById('overlay'),modal=document.getElementById('modal'),balance=172328.42;let f={};
-const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
-const esc=s=>s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-function show(h){modal.innerHTML=h;overlay.classList.add('show')}function hide(){overlay.classList.remove('show')}
-function head(t,b=''){return '<div class="head"><div class="row">'+(b?'<button class="back" onclick="'+b+'">‹</button>':'')+'<h2>'+t+'</h2></div><button class="close" onclick="hide()">×</button></div>'}
-function asset(){show(head('Withdraw')+'<div class="choice" onclick="speed()"><div class="row"><div class="coin">$</div><div><strong>US Dollar</strong><small>USD</small></div></div><strong>'+money(balance)+'</strong></div><div class="note">Interactive prototype only. This demo is not connected to Kraken, a bank, or any payment network.</div>')}
-function speed(){show(head('Select withdrawal speed','asset()')+'<div class="choice" onclick="method()"><div><strong>▣ &nbsp; Up to 3 business days</strong><small>Estimated arrival within 3 business days</small></div><div>›</div></div><div class="note">Instant withdrawal is intentionally omitted from this concept.</div>')}
-function method(){show(head('Select a withdrawal method','speed()')+'<div class="choice" onclick="bank()"><div><strong>▣ &nbsp; Wire</strong><small>Bank wire • prototype route</small></div><div>›</div></div><div class="note">Only Wire is shown here. No real transfer can be initiated.</div>')}
-function bank(){show(head('Enter recipient bank details','method()')+'<div class="fields"><input class="field" id="n" placeholder="Recipient name"><input class="field" id="b" placeholder="Bank name"><input class="field" id="a" placeholder="Account number"><input class="field" id="r" placeholder="Routing number"><input class="field" id="k" placeholder="Account nickname"></div><div class="secure"><b>🔒 Demo data stays on this page</b><br><span style="color:#666">Nothing is sent, stored, or logged.</span></div><button class="continue" onclick="saveBank()">Continue</button>')}
-function saveBank(){f={name:n.value.trim(),bank:b.value.trim(),account:a.value.trim(),routing:r.value.trim(),nickname:k.value.trim()};if(!Object.values(f).every(Boolean)){alert('Fill in each demo field to continue.');return}amount()}
-function amount(){show(head('How much do you want to withdraw?','bank()')+'<div class="muted">Available balance</div><div style="font-size:34px;font-weight:850;margin:6px 0 22px">'+money(balance)+'</div><div class="row"><input class="field" id="amt" type="number" min="0" max="'+balance+'" step=".01" placeholder="$0.00"><button class="btn dark" onclick="amt.value=\''+balance.toFixed(2)+'\'">Withdraw all</button></div><div class="summary"><div><span>Recipient</span><b>'+esc(f.name)+'</b></div><div><span>Bank</span><b>'+esc(f.bank)+'</b></div><div><span>Method</span><b>Wire</b></div></div><button class="continue" onclick="done()">Continue</button>')}
-function done(){const x=parseFloat(amt.value);if(!Number.isFinite(x)||x<=0||x>balance){alert('Enter an amount between $0.01 and '+money(balance)+'.');return}show(head('Withdrawal scheduled')+'<div class="success"><div class="check">✓</div><h2>'+money(x)+' scheduled</h2><p>Your concept wire withdrawal to <b>'+esc(f.name)+'</b> is shown as scheduled to be deposited within <b>3 business days</b>.</p><div class="summary"><div><span>Bank</span><b>'+esc(f.bank)+'</b></div><div><span>Account nickname</span><b>'+esc(f.nickname)+'</b></div><div><span>Status</span><b class="green">Demo complete</b></div></div><div class="note">CONCEPT DEMO — NO REAL TRANSACTION OCCURRED. Product visualization only.</div><button class="continue" onclick="hide()">Done</button></div>')}
-document.getElementById('withdraw').onclick=asset;overlay.onclick=e=>{if(e.target===overlay)hide()};
-</script></body></html>
+(() => {
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('modal');
+  const withdrawBtn = document.getElementById('withdrawBtn');
+  const balance = 172328.42;
+  const state = {
+    step: 'asset',
+    recipient: { name:'', bank:'', account:'', routing:'', nickname:'' },
+    amount: ''
+  };
+
+  const money = n => new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'}).format(n);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function openFlow(){ state.step='asset'; render(); overlay.classList.add('show'); }
+  function closeFlow(){ overlay.classList.remove('show'); }
+  function go(step){ state.step=step; render(); }
+
+  function head(title, backStep=''){
+    return `<div class="modal-head"><div class="row">${backStep ? `<button class="back" data-action="back" data-step="${backStep}" aria-label="Back">‹</button>` : ''}<h2>${title}</h2></div><button class="close" data-action="close" aria-label="Close">×</button></div>`;
+  }
+
+  function render(){
+    const r = state.recipient;
+    if(state.step==='asset'){
+      modal.innerHTML = head('Withdraw') + `
+        <div class="searchbox">⌕ &nbsp; Search</div>
+        <div class="section-title"><b>Cash</b><b>Available Balance</b></div>
+        <div class="choice" data-action="next" data-step="speed">
+          <div class="row"><div class="coin">$</div><div><strong>US Dollar</strong><small>USD</small></div></div>
+          <strong>${money(balance)}</strong>
+        </div>
+        <div class="concept-note">Interactive prototype only. This demo does not connect to Kraken, a bank, or any payment network.</div>`;
+      return;
+    }
+    if(state.step==='speed'){
+      modal.innerHTML = head('Select withdrawal speed','asset') + `
+        <div class="choice" data-action="next" data-step="method"><div><strong>▣ &nbsp; Up to 3 business days</strong><small>Estimated arrival within 3 business days</small></div><div>›</div></div>
+        <div class="concept-note">Instant withdrawal is intentionally omitted in this product concept.</div>`;
+      return;
+    }
+    if(state.step==='method'){
+      modal.innerHTML = head('Select a withdrawal method','speed') + `
+        <div class="choice" data-action="next" data-step="bank"><div><strong>▣ &nbsp; Wire</strong><small>Bank wire • prototype route</small></div><div>›</div></div>
+        <div class="concept-note">Only Wire is shown in this concept. No real transfer can be initiated.</div>`;
+      return;
+    }
+    if(state.step==='bank'){
+      modal.innerHTML = head('Enter recipient bank details','method') + `
+        <div class="fields">
+          <input class="field" id="recipientName" autocomplete="off" placeholder="Recipient name" value="${esc(r.name)}">
+          <input class="field" id="bankName" autocomplete="off" placeholder="Bank name" value="${esc(r.bank)}">
+          <input class="field" id="accountNumber" autocomplete="off" inputmode="numeric" placeholder="Account number" value="${esc(r.account)}">
+          <input class="field" id="routingNumber" autocomplete="off" inputmode="numeric" placeholder="Routing number" value="${esc(r.routing)}">
+          <input class="field" id="accountNickname" autocomplete="off" placeholder="Account nickname" value="${esc(r.nickname)}">
+        </div>
+        <div class="secure"><b>🔒 Demo data stays on this page</b><br><span class="subtle">Nothing is sent, stored, or logged by this prototype.</span></div>
+        <button class="continue" data-action="save-bank">Continue</button>`;
+      return;
+    }
+    if(state.step==='amount'){
+      modal.innerHTML = head('How much do you want to withdraw?','bank') + `
+        <div class="label">Available balance</div>
+        <div style="font-size:34px;font-weight:850;margin:6px 0 22px">${money(balance)}</div>
+        <div class="row"><input class="field" id="amountInput" inputmode="decimal" placeholder="$0.00" value="${esc(state.amount)}"><button class="btn secondary" type="button" style="white-space:nowrap" data-action="all">Withdraw all</button></div>
+        <div class="summary"><div><span>Recipient</span><b>${esc(r.name)}</b></div><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Method</span><b>Wire</b></div></div>
+        <button class="continue" data-action="review">Continue</button>`;
+      return;
+    }
+    if(state.step==='review'){
+      const amount = Number(state.amount);
+      modal.innerHTML = head('Review withdrawal','amount') + `
+        <div style="font-size:38px;font-weight:900;margin:4px 0 20px">${money(amount)}</div>
+        <div class="summary">
+          <div><span>Recipient</span><b>${esc(r.name)}</b></div>
+          <div><span>Bank</span><b>${esc(r.bank)}</b></div>
+          <div><span>Account</span><b>•••• ${esc(r.account.slice(-4) || r.account)}</b></div>
+          <div><span>Routing</span><b>•••• ${esc(r.routing.slice(-4) || r.routing)}</b></div>
+          <div><span>Nickname</span><b>${esc(r.nickname)}</b></div>
+          <div><span>Speed</span><b>Up to 3 business days</b></div>
+        </div>
+        <div class="concept-note">This final button only advances the prototype. It cannot move money.</div>
+        <button class="continue" data-action="confirm">Confirm withdrawal</button>`;
+      return;
+    }
+    if(state.step==='success'){
+      const amount = Number(state.amount);
+      modal.innerHTML = head('Withdrawal scheduled') + `
+        <div class="success">
+          <div class="check">✓</div>
+          <h2>${money(amount)} scheduled</h2>
+          <p>Your concept wire withdrawal to <b>${esc(r.name)}</b> is shown as scheduled to be deposited within <b>3 business days</b>.</p>
+          <div class="summary"><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Account nickname</span><b>${esc(r.nickname)}</b></div><div><span>Status</span><b class="green">Demo complete</b></div></div>
+          <div class="concept-note">CONCEPT DEMO — NO REAL TRANSACTION OCCURRED. This page is for product visualization only.</div>
+          <button class="continue" data-action="done">Done</button>
+        </div>`;
+    }
+  }
+
+  function saveBank(){
+    const fields = ['recipientName','bankName','accountNumber','routingNumber','accountNickname'].map(id => document.getElementById(id));
+    if(fields.some(el => !el || !el.value.trim())){ alert('Fill in each demo field to continue.'); return; }
+    state.recipient = { name:fields[0].value.trim(), bank:fields[1].value.trim(), account:fields[2].value.trim(), routing:fields[3].value.trim(), nickname:fields[4].value.trim() };
+    go('amount');
+  }
+
+  function saveAmount(){
+    const input=document.getElementById('amountInput');
+    const raw=(input?.value || '').replace(/[$,\s]/g,'');
+    const amount=Number(raw);
+    if(!Number.isFinite(amount) || amount<=0 || amount>balance){ alert(`Enter an amount between $0.01 and ${money(balance)}.`); return; }
+    state.amount=amount.toFixed(2);
+    go('review');
+  }
+
+  withdrawBtn.addEventListener('click', openFlow);
+  overlay.addEventListener('click', e => { if(e.target===overlay) closeFlow(); });
+  modal.addEventListener('click', e => {
+    const el=e.target.closest('[data-action]'); if(!el) return;
+    const action=el.dataset.action;
+    if(action==='close'){ closeFlow(); return; }
+    if(action==='back'){ go(el.dataset.step); return; }
+    if(action==='next'){ go(el.dataset.step); return; }
+    if(action==='save-bank'){ saveBank(); return; }
+    if(action==='all'){ const input=document.getElementById('amountInput'); if(input){input.value=balance.toFixed(2);state.amount=balance.toFixed(2);} return; }
+    if(action==='review'){ saveAmount(); return; }
+    if(action==='confirm'){ go('success'); return; }
+    if(action==='done'){
+      closeFlow();
+      state.step='asset'; state.amount=''; state.recipient={name:'',bank:'',account:'',routing:'',nickname:''};
+    }
+  });
+
+  modal.addEventListener('keydown', e => {
+    if(e.key!=='Enter') return;
+    if(state.step==='bank'){ e.preventDefault(); saveBank(); }
+    else if(state.step==='amount'){ e.preventDefault(); saveAmount(); }
+  });
+})();
+</script>
+</body>
+</html>
