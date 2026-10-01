@@ -93,24 +93,28 @@
     }
     if(state.step==='bank'){
       modal.innerHTML = head('Enter recipient bank details','method') + `
-        <div class="fields">
-          <input class="field" id="recipientName" autocomplete="off" placeholder="Recipient name" value="${esc(r.name)}">
-          <input class="field" id="bankName" autocomplete="off" placeholder="Bank name" value="${esc(r.bank)}">
-          <input class="field" id="accountNumber" autocomplete="off" inputmode="numeric" placeholder="Account number" value="${esc(r.account)}">
-          <input class="field" id="routingNumber" autocomplete="off" inputmode="numeric" placeholder="Routing number" value="${esc(r.routing)}">
-          <input class="field" id="accountNickname" autocomplete="off" placeholder="Account nickname" value="${esc(r.nickname)}">
-        </div>
-        <div class="secure"><b>🔒 Demo data stays on this page</b><br><span class="subtle">Nothing is sent, stored, or logged by this prototype.</span></div>
-        <button class="continue" type="button" data-action="save-bank" onclick="window.KrakenDemo.saveBank();return false;">Continue</button>`;
+        <form id="bankForm" onsubmit="return window.KrakenDemo.submitBank(event)">
+          <div class="fields">
+            <input class="field" id="recipientName" autocomplete="off" placeholder="Recipient name" value="${esc(r.name)}" required>
+            <input class="field" id="bankName" autocomplete="off" placeholder="Bank name" value="${esc(r.bank)}" required>
+            <input class="field" id="accountNumber" autocomplete="off" inputmode="numeric" placeholder="Account number" value="${esc(r.account)}" required>
+            <input class="field" id="routingNumber" autocomplete="off" inputmode="numeric" placeholder="Routing number" value="${esc(r.routing)}" required>
+            <input class="field" id="accountNickname" autocomplete="off" placeholder="Account nickname" value="${esc(r.nickname)}" required>
+          </div>
+          <div class="secure"><b>🔒 Demo data stays on this page</b><br><span class="subtle">Nothing is sent, stored, or logged by this prototype.</span></div>
+          <button class="continue" type="submit">Continue</button>
+        </form>`;
       return;
     }
     if(state.step==='amount'){
       modal.innerHTML = head('How much do you want to withdraw?','bank') + `
         <div class="label">Available balance</div>
         <div style="font-size:34px;font-weight:850;margin:6px 0 22px">${money(balance)}</div>
-        <div class="row"><input class="field" id="amountInput" inputmode="decimal" placeholder="$0.00" value="${esc(state.amount)}"><button class="btn secondary" type="button" style="white-space:nowrap" data-action="all" onclick="window.KrakenDemo.withdrawAll();return false;">Withdraw all</button></div>
-        <div class="summary"><div><span>Recipient</span><b>${esc(r.name)}</b></div><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Method</span><b>Wire</b></div></div>
-        <button class="continue" type="button" data-action="review" onclick="window.KrakenDemo.saveAmount();return false;">Continue</button>`;
+        <form id="amountForm" onsubmit="return window.KrakenDemo.submitAmount(event)">
+          <div class="row"><input class="field" id="amountInput" inputmode="decimal" placeholder="$0.00" value="${esc(state.amount)}" required><button class="btn secondary" type="button" style="white-space:nowrap" onclick="window.KrakenDemo.withdrawAll();return false;">Withdraw all</button></div>
+          <div class="summary"><div><span>Recipient</span><b>${esc(r.name)}</b></div><div><span>Bank</span><b>${esc(r.bank)}</b></div><div><span>Method</span><b>Wire</b></div></div>
+          <button class="continue" type="submit">Continue</button>
+        </form>`;
       return;
     }
     if(state.step==='review'){
@@ -189,6 +193,16 @@
     saveBank,
     saveAmount,
     go,
+    submitBank(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      saveBank();
+      return false;
+    },
+    submitAmount(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      saveAmount();
+      return false;
+    },
     withdrawAll(){
       const input=document.getElementById('amountInput');
       if(input){ input.value=balance.toFixed(2); state.amount=balance.toFixed(2); }
