@@ -272,6 +272,23 @@ a { color: inherit; text-decoration: none; }
 .field input:focus + label,
 .field input:not(:placeholder-shown) + label { top: 20px; font-size: 14px; color: #8b8b90; }
 .field .lock svg { width: 20px; height: 20px; color: #8b8b90; }
+.field.locked { padding-left: 18px; }
+.field-lock {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  color: #8b8b90;
+  flex-shrink: 0;
+}
+.field-lock svg {
+  width: 20px;
+  height: 20px;
+  color: #8b8b90;
+}
+.field.locked input[readonly] {
+  cursor: default;
+}
 .field.error { border-color: rgba(240,67,58,.6); }
 .hint { font-size: 15px; color: #c7c7cc; line-height: 1.6; margin: -10px 0 22px; }
 .secure {
