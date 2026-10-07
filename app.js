@@ -15,8 +15,8 @@
   const fmtUSD = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  // Fixed for the demo so the arrival always reads as Monday, October 5.
-  const arrivalDate = () => 'Monday, October 5';
+  // Fixed for the demo so the estimated arrival reads as Friday, October 9.
+  const arrivalDate = () => 'Friday, October 9';
 
   /* ---------------- Header numbers ---------------- */
   function renderBalance(series) {
@@ -274,7 +274,7 @@
       render() {
         return `
           <button class="option-card" id="std">
-            <div class="oc-head"><span class="oc-icon">${ICONS.bank}</span>1 business day</div>
+            <div class="oc-head"><span class="oc-icon">${ICONS.bank}</span>2 business days</div>
             <div class="oc-desc">Estimated arrival by ${arrivalDate()}.</div>
             <div class="oc-meta"><span>0-4 USD fee</span><span>Up to 250,000 USD daily</span></div>
           </button>`;
@@ -290,7 +290,7 @@
             <div class="badge-rec">Send to anyone</div>
             <div class="oc-head"><span class="oc-icon">${ICONS.bank}</span>Wire</div>
             <div class="oc-desc">To any US bank account — yours or someone else's.</div>
-            <div class="oc-meta"><span>1 business day</span><span>No fee</span><span>20 USD minimum</span></div>
+            <div class="oc-meta"><span>2 business days</span><span>No fee</span><span>20 USD minimum</span></div>
           </button>`;
       },
       mount() { $('#wire').onclick = () => go('bank'); },
@@ -441,7 +441,7 @@
           <div class="center">
             <svg class="check-circle" viewBox="0 0 104 104"><circle cx="52" cy="52" r="52"/><path d="M32 53.5 45.5 67 73 39"/></svg>
             <h3 class="success-title">${fmtUSD(r.amount)} is on its way</h3>
-            <p class="success-sub">Your wire to <b style="color:#fff">${esc(r.bank.name)}</b> will be deposited within 1 business day — on ${r.arrival}.</p>
+            <p class="success-sub">Your wire to <b style="color:#fff">${esc(r.bank.name)}</b> will be deposited within 2 business days — on ${r.arrival}.</p>
           </div>
           <div class="receipt">
             <div class="sr"><span>Amount</span><b>${fmtUSD(r.amount)} USD</b></div>
@@ -449,7 +449,7 @@
             <div class="sr"><span>Bank</span><b>${esc(r.bank.bank)} ••••${esc(r.bank.account.slice(-4))}</b></div>
             <div class="sr"><span>Routing number</span><b>${esc(r.bank.routing)}</b></div>
             <div class="sr"><span>Nickname</span><b>${esc(r.bank.nickname)}</b></div>
-            <div class="sr"><span>Method</span><b>Wire · 1 business day</b></div>
+            <div class="sr"><span>Method</span><b>Wire · 2 business days</b></div>
             <div class="sr"><span>Fee</span><b>$0.00</b></div>
             <div class="sr"><span>Status</span><b class="green">Pending</b></div>
             <div class="sr"><span>Reference</span><b>${r.ref}</b></div>
