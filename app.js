@@ -1,12 +1,12 @@
 /* Kraken wire-withdraw concept — everything here is a front-end facade. No data leaves the browser. */
 (() => {
-  const START_BALANCE = 90000.00;
+  const START_BALANCE = 63000.00;
   const state = {
     balance: START_BALANCE,
     range: '1M',
     step: 'asset',
     history: [],
-    bank: { name: 'MOHAMMAD HOQUE', bank: '', account: '', routing: '', nickname: '' },
+    bank: { name: '', bank: '', account: '', routing: '', nickname: '' },
     amount: '',
     receipt: null,
   };
@@ -299,9 +299,9 @@
     bank: {
       title: 'Enter bank account details',
       render() {
-        const f = (id, label, val, extra = '', locked = false) => `
-          <div class="field ${locked ? 'locked' : ''}" data-f="${id}">
-            ${locked ? `<span class="field-lock">${ICONS.lock}</span>` : ''}
+        const f = (id, label, val, extra = '') => `
+          <div class="field" data-f="${id}">
+            
             <div class="fl-wrap">
               <input id="f_${id}" placeholder=" " value="${esc(val)}" autocomplete="off" spellcheck="false" ${extra}/>
               <label for="f_${id}">${label}</label>
@@ -309,7 +309,7 @@
           </div>`;
         const b = state.bank;
         return `
-          ${f('name', 'Name on your bank account', b.name, 'readonly aria-readonly="true"', true)}
+          ${f('name', 'Recipient name on bank account', b.name)}
           ${f('bank', 'Bank name', b.bank)}
           ${f('account', 'Account number', b.account, 'inputmode="numeric" maxlength="17"')}
           ${f('routing', 'Routing number', b.routing, 'inputmode="numeric" maxlength="9"')}
@@ -324,7 +324,7 @@
           const b = state.bank;
           btn.disabled = !(b.name.trim() && b.bank.trim() && b.account.trim() && b.routing.trim() && b.nickname.trim());
         };
-        ['bank', 'account', 'routing', 'nickname'].forEach((k) => {
+        ['name', 'bank', 'account', 'routing', 'nickname'].forEach((k) => {
           const inp = $('#f_' + k);
           inp.addEventListener('input', () => {
             if (k === 'account' || k === 'routing') inp.value = inp.value.replace(/\D/g, '');
@@ -335,7 +335,7 @@
         });
         check();
         btn.onclick = () => go('amount');
-        setTimeout(() => $('#f_bank').focus(), 60);
+        setTimeout(() => $('#f_name').focus(), 60);
       },
     },
 
