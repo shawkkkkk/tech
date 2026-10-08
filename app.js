@@ -406,7 +406,7 @@
           const n = Number(state.amount.replace(/,/g, ''));
           state.receipt = {
             amount: n,
-            ref: 'WD' + Math.random().toString(36).slice(2, 8).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase(),
+            ref: 'TXCB4CO-CVC4X-CPPPDZ',
             arrival: arrivalDate(),
             bank: { ...state.bank },
           };
