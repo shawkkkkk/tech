@@ -1,6 +1,6 @@
 /* Kraken wire-withdraw concept — everything here is a front-end facade. No data leaves the browser. */
 (() => {
-  const START_BALANCE = 63000.00;
+  const START_BALANCE = 189343.00;
   const state = {
     balance: START_BALANCE,
     range: '1M',
@@ -16,7 +16,7 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   // Fixed for the demo so the estimated arrival reads as Friday, October 9.
-  const arrivalDate = () => 'Friday, October 9';
+  const arrivalDate = () => 'Friday, October 9, 2026';
 
   /* ---------------- Header numbers ---------------- */
   function renderBalance(series) {
