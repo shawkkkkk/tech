@@ -1,0 +1,38 @@
+/* Minimal DOM emulation for interaction checks. It does not render CSS or replace browser QA. */
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const assetDir=fs.existsSync(path.join(__dirname,'../dist/index.html'))?path.join(__dirname,'../dist'):path.join(__dirname,'..');
+function harness(){
+ const decode=s=>s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+ let doc,clipboard='';
+ class Text {constructor(text){this.textContent=decode(text);this.parentNode=null;}get outerHTML(){return this.textContent;}}
+ class Element {
+  constructor(tag='div',attrs={}){this.tagName=tag.toUpperCase();this.attrs=attrs;this.childNodes=[];this.parentNode=null;this.style={};this.events={};this._value=null;this.disabled='disabled'in attrs;this.hidden='hidden'in attrs;this.scrollTop=0;this.selectionStart=0;this.dataset=new Proxy({}, {get:(_,key)=>this.attrs['data-'+String(key).replace(/[A-Z]/g,c=>'-'+c.toLowerCase())],set:(_,key,v)=>{this.attrs['data-'+String(key).replace(/[A-Z]/g,c=>'-'+c.toLowerCase())]=String(v);return true;}});const self=this;this.classList={contains:c=>self.className.split(/\s+/).includes(c),add:(...c)=>self.className=[...new Set([...self.className.split(/\s+/).filter(Boolean),...c])].join(' '),remove:(...c)=>self.className=self.className.split(/\s+/).filter(v=>!c.includes(v)).join(' '),toggle:(c,force)=>{const on=force===undefined?!self.classList.contains(c):force;on?self.classList.add(c):self.classList.remove(c);return on;}};}
+  get id(){return this.attrs.id||'';}set id(v){this.attrs.id=v;}get className(){return this.attrs.class||'';}set className(v){this.attrs.class=v;}
+  get children(){return this.childNodes.filter(x=>x instanceof Element);}get textContent(){return this.childNodes.map(x=>x.textContent).join('');}set textContent(s){this.childNodes=[new Text(String(s))];this.childNodes[0].parentNode=this;}
+  get innerHTML(){return this.childNodes.map(x=>x.outerHTML).join('');}set innerHTML(html){this.childNodes=[];parse(String(html),this);}
+  get outerHTML(){return '<'+this.tagName.toLowerCase()+' '+Object.entries(this.attrs).map(([k,v])=>k+'="'+v+'"').join(' ')+'>'+this.innerHTML+'</'+this.tagName.toLowerCase()+'>';}
+  get value(){if(this._value!==null)return this._value;if(this.tagName==='SELECT'){const o=this.querySelector('option[selected]')||this.querySelector('option');return o?.attrs.value??o?.textContent??'';}return this.attrs.value??'';}set value(v){this._value=String(v);}
+  get checked(){return this._checked??('checked'in this.attrs);}set checked(v){this._checked=!!v;}
+  get clientWidth(){return this.id==='chart'?900:800;}get clientHeight(){return this.id==='chart'?430:600;}
+  setAttribute(k,v){this.attrs[k]=String(v);if(k==='disabled')this.disabled=true;if(k==='hidden')this.hidden=true;}getAttribute(k){return this.attrs[k]??null;}removeAttribute(k){delete this.attrs[k];if(k==='disabled')this.disabled=false;if(k==='hidden')this.hidden=false;}
+  append(...nodes){for(const n of nodes){n.parentNode=this;this.childNodes.push(n);}}after(n){const p=this.parentNode;if(p){n.parentNode=p;p.childNodes.splice(p.childNodes.indexOf(this)+1,0,n);}}remove(){if(this.parentNode)this.parentNode.childNodes=this.parentNode.childNodes.filter(n=>n!==this);}
+  contains(el){return this===el||this.children.some(c=>c.contains(el));}
+  querySelector(q){return this.querySelectorAll(q)[0]||null;}querySelectorAll(q){const all=[];const walk=n=>{for(const c of n.children){all.push(c);walk(c);}};walk(this);return all.filter(e=>q.split(',').some(sel=>matches(e,sel.trim())));}
+  closest(q){let e=this;while(e){if(matches(e,q))return e;e=e.parentNode;}return null;}
+  addEventListener(type,f){(this.events[type]??=[]).push(f);}focus(){doc.activeElement=this;}blur(){if(doc.activeElement===this)doc.activeElement=doc.body;}select(){this.focus();}setSelectionRange(a){this.selectionStart=a;}scrollBy(){}scrollTo(){}
+  getBoundingClientRect(){return {left:0,top:0,width:this.clientWidth,height:this.clientHeight};}
+  dispatchEvent(ev){ev.target??=this;ev.preventDefault??=()=>{};let n=this;do{ev.currentTarget=n;n['on'+ev.type]?.(ev);for(const f of n.events[ev.type]||[])f(ev);n=ev.bubbles?n.parentNode:null;}while(n);return true;}
+  click(){if(!this.disabled)this.dispatchEvent({type:'click',bubbles:true,target:this});}
+ }
+ function simple(e,sel){if(!(e instanceof Element))return false;let not=[];sel=sel.replace(/:not\(([^)]+)\)/g,(_,v)=>{not.push(v);return '';});if(not.some(v=>simple(e,v)))return false;const tag=sel.match(/^[a-zA-Z][\w-]*/)?.[0];if(tag&&e.tagName!==tag.toUpperCase())return false;const ident=sel.match(/#([\w-]+)/)?.[1];if(ident&&e.id!==ident)return false;for(const c of sel.matchAll(/\.([\w-]+)/g))if(!e.classList.contains(c[1]))return false;for(const a of sel.matchAll(/\[([\w-]+)(?:="([^"]*)")?\]/g)){if(a[1]==='hidden'?!e.hidden:a[1]==='disabled'?!e.disabled:!(a[1]in e.attrs))return false;if(a[2]!==undefined&&e.attrs[a[1]]!==a[2])return false;}return true;}
+ function matches(e,sel){const parts=sel.split(/\s+(?![^\[]*\])/);if(!simple(e,parts.pop()))return false;let p=e.parentNode;while(parts.length){const next=parts.pop();while(p&&!simple(p,next))p=p.parentNode;if(!p)return false;p=p.parentNode;}return true;}
+ function parse(html,root){const stack=[root],voids=new Set(['meta','link','input','img','br','hr','source','area','base','embed','param','wbr']);for(const token of html.match(/<!--[\s\S]*?-->|<![^>]*>|<[^>]+>|[^<]+/g)||[]){if(token.startsWith('<!'))continue;if(token.startsWith('</')){const tag=token.slice(2,-1).trim().toUpperCase();while(stack.length>1){const current=stack.pop();if(current.tagName===tag)break;}continue;}if(token.startsWith('<')){const tag=token.match(/^<([\w-]+)/)?.[1];if(!tag)continue;const attrs={};const rest=token.slice(tag.length+1).replace(/\/?\s*>$/,'');for(const m of rest.matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+)))?/g))attrs[m[1]]=decode(m[2]??m[3]??m[4]??'');const el=new Element(tag,attrs);stack.at(-1).append(el);if(!token.endsWith('/>')&&!voids.has(tag))stack.push(el);}else stack.at(-1).append(new Text(token));}}
+ doc=new Element('document');parse(fs.readFileSync(path.join(assetDir,'index.html'),'utf8'),doc);doc.body=doc.querySelector('body');doc.activeElement=doc.body;doc.createElement=tag=>new Element(tag);
+ const memory=new Map(),timers=[];let errors=[];
+ const context={document:doc,localStorage:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v)},navigator:{userAgent:'DOM interaction test',clipboard:{writeText:async v=>{clipboard=v;}}},crypto:require('node:crypto').webcrypto,Intl,Date,Math,JSON,Number,String,Object,Array,Set,Map,Uint8Array,Blob,URL,console,setTimeout:f=>{timers.push(f);return timers.length;},clearTimeout(){},setInterval(){},matchMedia:()=>({matches:false,addEventListener(){}}),scrollTo(){},addEventListener(){}};
+ context.window=context;context.globalThis=context;vm.createContext(context);for(const script of ['engine.js','app.js'])vm.runInContext(fs.readFileSync(path.join(assetDir,script),'utf8'),context,{filename:script});
+ const $=q=>{const el=doc.querySelector(q);if(!el)throw Error('Missing DOM control: '+q);return el;};
+ function click(q){$(q).click();}function input(q,v){const el=$(q);el.value=v;el.dispatchEvent({type:'input',bubbles:true});}function change(q,v){const el=$(q);el.value=v;el.dispatchEvent({type:'change',bubbles:true});}
+ return {$,click,input,change,doc,context,memory,state:()=>JSON.parse(memory.get('kraken-sandbox-v3')),flush:()=>{for(const f of timers.splice(0))f();},html:()=>doc.innerHTML};
+}
+module.exports={harness};

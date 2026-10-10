@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Kraken — Wire Withdraw Concept</title>
+  <title>Kraken — Interactive Sandbox</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <div class="app">
@@ -40,19 +41,20 @@
       <header class="topbar">
         <div class="search">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input type="text" placeholder="Search assets, markets..." />
+          <input id="globalSearch" type="search" aria-label="Search assets and markets" placeholder="Search assets, markets..." autocomplete="off" />
           <kbd>⌘ + K</kbd>
         </div>
         <div class="top-actions">
           <button class="pill-btn"><svg viewBox="0 0 24 24"><path d="M8 20V5m0 0L4.5 8.5M8 5l3.5 3.5M16 4v15m0 0-3.5-3.5M16 19l3.5-3.5"/></svg>Transfer</button>
           <button class="icon-btn" aria-label="Apps"><svg viewBox="0 0 24 24" class="filled"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg></button>
           <button class="icon-btn notif" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg><i></i></button>
-          <button class="avatar">MH <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button class="avatar" aria-label="Account settings">MH <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
         </div>
       </header>
 
       <div class="content">
         <section class="left">
+          <div id="homeView">
           <div class="pv-label">Portfolio value</div>
           <div class="pv-value" id="pvValue"></div>
           <div class="pv-stats">
@@ -61,14 +63,14 @@
               <div class="stat-value up" id="changeValue"></div>
             </div>
             <div>
-              <div class="stat-label">Unrealized return</div>
-              <div class="stat-value up">+$4,646.37</div>
+              <div class="stat-label">Available cash</div>
+              <div class="stat-value" id="cashValue"></div>
             </div>
           </div>
 
           <div class="actions-row">
             <div class="btn-group">
-              <button class="btn btn-light"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="3" fill="#fff" stroke="none"/></svg>Deposit</button>
+              <button class="btn btn-light" id="depositBtn"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="3" fill="#fff" stroke="none"/></svg>Deposit</button>
               <button class="btn btn-dark" id="withdrawBtn"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 20h14"/></svg>Withdraw</button>
             </div>
             <div class="ranges" id="ranges">
@@ -86,6 +88,7 @@
             <div class="chart-tip" id="chartTip"></div>
           </div>
 
+          <p class="chart-caption">Illustrative portfolio history · sample data</p>
           <div class="for-you">
             <div class="for-you-head">
               <span>FOR YOU</span>
@@ -101,6 +104,8 @@
               <div class="fy-card"><div class="fy-tag">Recurring</div><div class="fy-title">Set up recurring buys</div><div class="fy-sub">Dollar-cost average into BTC automatically.</div></div>
             </div>
           </div>
+          </div>
+          <div id="pageView" hidden></div>
         </section>
 
         <!-- Trade panel -->
@@ -114,8 +119,8 @@
               <button class="ghost-select" id="orderType">Buy now<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
             </div>
             <div class="trade-amount">
-              <input id="tradeAmt" inputmode="decimal" value="$0" />
-              <span class="unit">BTC <svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></span>
+              <input id="tradeAmt" aria-label="Trade amount" inputmode="decimal" value="$0" autocomplete="off" />
+              <button class="unit" id="unitToggle" aria-label="Switch trade amount unit">BTC <svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></button>
             </div>
             <div class="presets" id="presets">
               <button data-v="20">$20</button><button data-v="50">$50</button><button data-v="100">$100</button><button data-v="max">MAX</button>
@@ -123,9 +128,10 @@
           </div>
           <div class="trade-box repeat">
             <span>Repeat</span>
-            <button class="toggle" id="repeatToggle" aria-pressed="false"><i></i></button>
+            <button class="toggle" aria-label="Repeat trade" id="repeatToggle" aria-pressed="false"><i></i></button>
           </div>
-          <div class="pay-label">Pay with</div>
+          <div id="orderFields" hidden></div>
+          <div class="pay-label" id="payLabel">Pay with</div>
           <div class="pay-row">
             <button class="currency"><span class="flag"></span>USD<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
             <span class="avail" id="payAvail"></span>
@@ -148,9 +154,10 @@
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
-  <div class="concept-badge">Concept prototype · not a real Kraken product</div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="concept-badge">Sandbox · simulated funds · not affiliated with Kraken</div>
 
-  <script src="app.js"></script>
+  <script src="engine.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
