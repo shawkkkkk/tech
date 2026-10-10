@@ -467,6 +467,8 @@ select option { background:#222;color:#fff; }
 .status.pending { background:#b2d2ff;color:#20446d; }
 .status.completed { background:#183b29;color:#69d29b; }
 .status.canceled { background:#362023;color:#ec999e; }
+.status.failed { background:#481e1e;color:#ff4e53; }
+.transaction-row.failed .transaction-amount { color:var(--muted); }
 .activity-filters select,.activity-filters label { border:1px solid #55555b;border-radius:999px;background:none;font-size:11px;padding:10px 13px; }
 .activity-filters label { display:flex;flex-direction:column;gap:2px;color:var(--muted-2);max-width:140px; }
 .activity-filters input { border:0;padding:0;font-size:11px;background:none;width:110px;color:var(--text);color-scheme:dark; }

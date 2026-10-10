@@ -68,7 +68,7 @@ test('hash lookup stays separate from funding reference and AA account ID',()=>{
   assert.match(E.supportAnswer(s,t.id).text,/Funding transaction: FT/);
 });
 test('missing history or a new account returns a useful response without fabricating a wire',()=>{
-  const s=E.initial();
+  const s=E.initial();s.activity=[];
   assert.equal(E.supportAnswer(s,'latest withdrawal').kind,'not-found');
   assert.match(E.supportAnswer(s,s.profile.publicId).text,/no withdrawals yet/);
 });

@@ -26,13 +26,64 @@
     if(root.crypto?.getRandomValues)root.crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);
     return prefix+[...bytes].map((v,i)=>i===bytes.length-1?String(v%10):alphabet[v%alphabet.length]).join('');
   }
-  function fundingId(s) {let value;do{value=formattedId('FT',19);}while(s.activity.some(t=>t.id===value));return value;}
+  function fundingId(s) {
+    let value;do{
+      const bytes=new Uint8Array(17);
+      if(root.crypto?.getRandomValues)root.crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);
+      value='FT'+[...bytes].map(v=>String(v%10)).join('');
+    }while(s.activity.some(t=>t.id===value));return value;
+  }
   const START_CENTS = 6500000;
   // A dated sandbox scenario requested by the user, not a live bank ETA.
   const WIRE_SCENARIO = Object.freeze({days:3,arrivalDate:'2026-10-14'});
   const displayDate = value => new Date(value.length===10?value+'T12:00:00Z':value).toLocaleDateString('en-US',{timeZone:'America/Chicago',weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  // Display values are transcribed from the supplied screenshots, including
+  // their precision and the unusual $7.94 / -27.94 USDC sale. Do not reprice them.
+  const HISTORY = [
+    ['2026-10-08','Withdrew USDC','Crypto withdrawal','USDC',19762,197.68,'$197.62','-197.68 USDC'],
+    ['2026-10-08','Bought USDC','Trade','USDC',19768,197.68,'$197.68','+197.68 USDC','Completed','USD','USDC'],
+    ['2026-10-08','Sold Ethereum','Trade','ETH',19418,.07904,'$194.18','-0.07904 ETH','Completed','ETH','USD'],
+    ['2026-10-08','Converted to Ethereum','Trade','ETH',20000,.07904,'200.00 USDC','+0.07904 ETH','Completed','USDC','ETH'],
+    ['2026-10-08','Deposited USDC','Deposit','USDC',9997,100,'$99.97','+100.00 USDC'],
+    ['2026-10-08','Deposited USDC','Deposit','USDC',9997,100,'$99.97','+100.00 USDC'],
+    ['2026-10-08','Withdrew USDC','Crypto withdrawal','USDC',20794,208,'$207.94','-208.00 USDC'],
+    ['2026-10-08','Bought USDC','Trade','USDC',20800,208,'$208.00','+208.00 USDC','Completed','USD','USDC'],
+    ['2026-10-08','Deposited US Dollar','Deposit','USD',21150,211.5,'+$211.50',''],
+    ['2026-10-08','Sold Ethereum','Trade','ETH',1857,.00762,'$18.57','-0.00762 ETH','Completed','ETH','USD'],
+    ['2026-10-08','Deposited Ethereum','Deposit','ETH',1885,.00762,'$18.85','+0.00762 ETH'],
+    ['2026-10-08','Deposited US Dollar','Deposit','USD',9600,96,'+$96.00','','Failed'],
+    ['2026-10-08','Deposited US Dollar','Deposit','USD',33662,336.62,'+$336.62','','Failed'],
+    ['2026-10-08','Deposited US Dollar','Deposit','USD',43287,432.87,'+$432.87','','Failed'],
+    ['2026-10-08','Deposited US Dollar','Deposit','USD',72162,721.62,'+$721.62','','Failed'],
+    ['2026-10-07','Withdrew USDC','Crypto withdrawal','USDC',308951,3090.0075,'$3,089.51','-3,090.0075 USDC'],
+    ['2026-10-07','Bought USDC','Trade','USDC',309000,3090,'$3,090.00','+3,090.00 USDC','Completed','USD','USDC'],
+    ['2026-10-07','Deposited US Dollar','Deposit','USD',309000,3090,'+$3,090.00',''],
+    ['2026-10-05','Withdrew US Dollar','Cash withdrawal','USD',2856,28.56,'-$28.56',''],
+    ['2026-10-05','Sold USDC','Trade','USDC',794,27.94,'$7.94','-27.94 USDC','Completed','USDC','USD']
+  ];
+  function addScreenshotHistory(s) {
+    HISTORY.forEach(([day,title,type,symbol,grossCents,quantity,displayAmount,displayQuantity,status='Completed',source,target],i)=>{
+      const historyKey='screenshot-2026-10-09-'+i;
+      if(s.activity.some(t=>t.historyKey===historyKey))return;
+      s.activity.push({id:type==='Trade'?id('LEDGER'):fundingId(s),publicAccountId:s.profile.publicId,type,symbol,...(source?{source}:{}),...(target?{target}:{}),grossCents,quantity,title,description:title,date:day+'T12:00:00-05:00',dateOnly:day,status,displayAmount,displayQuantity,historyKey,sourceScreenshot:true});
+    });
+    s.historyRevision=1;
+  }
+  function migrateHistory(s) {
+    const opening=s.activity.find(t=>t.id==='OPENING-BALANCE'||t.id==='DEMO-OPENING');
+    if(opening) {
+      const oldId=opening.id;opening.id=fundingId(s);opening.publicAccountId=s.profile.publicId;opening.description='USD deposit';opening.initialFunding=true;
+      s.activity.forEach(t=>{if(t.relatedId===oldId)t.relatedId=opening.id;});
+      if(s.supportContextId===oldId)s.supportContextId=opening.id;
+      s.supportChat.forEach(m=>{if(m.transactionId===oldId)m.transactionId=opening.id;});
+    }
+    if(s.historyRevision!==1)addScreenshotHistory(s);
+    return s;
+  }
   function initial() {
-    return {version:3,cashCents:START_CENTS,earnCents:0,loanCents:0,holdings:{},collateral:{},activity:[{id:'OPENING-BALANCE',type:'Deposit',date:new Date().toISOString(),status:'Completed',symbol:'USD',quantity:START_CENTS/100,grossCents:START_CENTS,description:'Opening USD balance'}],orders:[],watchlist:['BTC','ETH'],notifications:[{id:'welcome',text:'Your $65,000 sandbox is ready. The 3-day wire scenario estimates arrival on October 14, 2026.',read:false}],profile:{name:'MOHAMMAD HOQUE',currency:'USD',publicId:formattedId('AA',16)},settings:{hidden:false,collapsed:false,security:false,theme:'dark',plus:false,notify:true,signedOut:false},claims:[],tickets:[],supportChat:[],supportContextId:null,lastAccrual:Date.now(),rewardRemainder:0};
+    const s={version:3,cashCents:START_CENTS,earnCents:0,loanCents:0,holdings:{},collateral:{},activity:[],orders:[],watchlist:['BTC','ETH'],notifications:[{id:'welcome',text:'Your $65,000 sandbox is ready. The 3-day wire scenario estimates arrival on October 14, 2026.',read:false}],profile:{name:'MOHAMMAD HOQUE',currency:'USD',publicId:formattedId('AA',16)},settings:{hidden:false,collapsed:false,security:false,theme:'dark',plus:false,notify:true,signedOut:false},claims:[],tickets:[],supportChat:[],supportContextId:null,lastAccrual:Date.now(),rewardRemainder:0};
+    s.activity.push({id:fundingId(s),publicAccountId:s.profile.publicId,type:'Deposit',date:new Date().toISOString(),status:'Completed',symbol:'USD',quantity:START_CENTS/100,grossCents:START_CENTS,description:'USD deposit',initialFunding:true});
+    addScreenshotHistory(s);return s;
   }
   function load(raw) {
     try {
@@ -44,7 +95,7 @@
       d.settings={...initial().settings,...d.settings};d.profile={...initial().profile,...d.profile};
       d.supportChat=Array.isArray(d.supportChat)?d.supportChat.filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.text==='string').slice(-100):[];
       d.supportContextId=typeof d.supportContextId==='string'?d.supportContextId:null;
-      return d;
+      return migrateHistory(d);
     } catch { return initial(); }
   }
   function balance(s,sym) { return sym==='USD'?s.cashCents/100:s.holdings[sym]||0; }
@@ -121,7 +172,9 @@
     const t=s.activity.find(t=>t.id===transactionId);
     if(!t)return {kind:'not-found',text:'That transaction is no longer in this browser’s history. Paste a reference from Activity.'};
     const usd=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n/100);
-    const lines=['Funding transaction: '+t.id,'Transaction date: '+displayDate(t.date),'Type: '+t.type,'Status: '+t.status,'Amount: '+usd(t.grossCents||0)];
+    const lines=[(/^FT/.test(t.id)?'Funding transaction: ':'Transaction reference: ')+t.id,'Transaction date: '+displayDate(t.date),'Type: '+(t.title||t.type),'Status: '+t.status,'Amount: '+(t.displayAmount||usd(t.grossCents||0))];
+    if(t.displayQuantity)lines.push('Asset amount: '+t.displayQuantity);
+    if(t.sourceScreenshot)lines.push('Historical screenshot record. Exact time, fees and bank arrival estimate were not supplied.');
     if(t.publicAccountId)lines.push('Public Account ID: '+t.publicAccountId);
     if(t.type==='Wire withdrawal') {
       lines.push('Processing: '+t.processingDays+'-day wire');
@@ -150,7 +203,7 @@
     if(looksLikeRef)return {kind:'not-found',text:'I could not find that reference in this browser’s transactions. Copy the complete TX reference from Activity. I cannot look up real Kraken or bank transfers.'};
     if(/\b(latest|last|recent)\b/i.test(text)) {
       const withdrawals=/\b(withdrawal|withdraw|wire|transfer)\b/i.test(text),wireOnly=/\bwire\b/i.test(text);
-      const t=s.activity.find(t=>t.id!=='OPENING-BALANCE'&&(!withdrawals||/withdrawal$/i.test(t.type))&&(!wireOnly||t.type==='Wire withdrawal'));
+      const t=s.activity.find(t=>(!withdrawals||/withdrawal$/i.test(t.type))&&(!wireOnly||t.type==='Wire withdrawal'));
       return t?transactionSupport(s,t.id):{kind:'not-found',text:withdrawals?'There are no withdrawals yet. Create one using Withdraw, then paste its TX reference here.':'There are no new transactions yet. Make a deposit, trade or withdrawal first.'};
     }
     if(contextId&&/\b(date|when|arrival|arrive|status|pending|fee|amount|wire|transfer|transaction|it|that)\b/i.test(text))return transactionSupport(s,contextId);
